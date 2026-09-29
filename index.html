@@ -3,792 +3,777 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tower Defense Medieval</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Medieval Defense</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;600&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
+        * {
+            box-sizing: border-box;
             margin: 0;
-            overflow: hidden;
-            background-color: #111827; /* gray-900 */
-        }
-        
-        h1, h2, h3, .medieval-font {
-            font-family: 'Cinzel', serif;
+            padding: 0;
+            user-select: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Animação para a raridade Mítica (arco-íris) */
-        @keyframes rainbow-bg {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .rainbow-gradient {
-            background: linear-gradient(45deg, #ff0000, #ff7f00, #eab308, #22c55e, #3b82f6, #a855f7, #ef4444);
-            background-size: 300% 300%;
-            animation: rainbow-bg 4s ease infinite;
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-            border-color: #fff !important;
+        body {
+            background-color: #1a1a24;
+            color: #fff;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
         }
 
         #game-container {
+            flex: 1;
+            position: relative;
             display: flex;
-            align-items: center;
             justify-content: center;
-            background-image: radial-gradient(circle, #0f172a, #020617);
+            align-items: center;
+            background-color: #0f0f15;
         }
 
         canvas {
-            background-color: #166534; /* Grama verde */
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            max-width: 100%;
-            max-height: 100%;
-            aspect-ratio: 1024 / 768;
-            cursor: crosshair;
+            border: 2px solid #333;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            background-color: #2e5a1c;
         }
 
-        .tower-card {
-            transition: all 0.2s ease-in-out;
-            user-select: none;
-        }
-        
-        .tower-card:hover {
-            transform: scale(1.02);
-            filter: brightness(1.1);
-        }
-
-        .tower-card.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            filter: grayscale(0.8);
+        #ui-panel {
+            width: 360px;
+            background-color: #12121a;
+            border-left: 2px solid #2a2a3a;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            gap: 15px;
+            overflow-y: auto;
         }
 
-        .tower-card.selected {
-            outline: 4px solid #fff;
-            box-shadow: 0 0 15px rgba(255,255,255,0.6);
-            transform: scale(1.05);
+        .header {
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
         }
 
-        /* Custom scrollbar para a loja */
-        ::-webkit-scrollbar {
-            width: 8px;
+        .header h1 {
+            font-size: 22px;
+            color: #f59e0b;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
-        ::-webkit-scrollbar-track {
-            background: #1f2937; 
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #1e1e2d;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #4b5563; 
-            border-radius: 4px;
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #6b7280; 
+
+        .shop-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
         }
+
+        .shop-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .unit-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #181824;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .unit-card:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.2);
+        }
+
+        .unit-card.selected {
+            border-color: #ffffff !important;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+        }
+
+        .unit-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .unit-icon {
+            font-size: 24px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.3);
+            border-radius: 6px;
+        }
+
+        .unit-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .unit-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .unit-stats {
+            font-size: 11px;
+            color: #aaa;
+        }
+
+        .unit-price {
+            font-weight: bold;
+            color: #10b981;
+            font-size: 14px;
+        }
+
+        /* Raridades */
+        .rarity-comum { border-color: #808080; }
+        .rarity-comum .unit-name { color: #808080; }
+
+        .rarity-incomum { border-color: #22c55e; }
+        .rarity-incomum .unit-name { color: #22c55e; }
+
+        .rarity-raro { border-color: #3b82f6; }
+        .rarity-raro .unit-name { color: #3b82f6; }
+
+        .rarity-epico { border-color: #a855f7; }
+        .rarity-epico .unit-name { color: #a855f7; }
+
+        .rarity-lendario { border-color: #eab308; }
+        .rarity-lendario .unit-name { color: #eab308; }
+
+        .rarity-mitico {
+            border-image: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet) 1;
+            animation: rainbow-border 3s linear infinite;
+        }
+        .rarity-mitico .unit-name {
+            background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .rarity-secreto { border-color: #dc2626; background: linear-gradient(135deg, #181824 0%, #2a0808 100%); }
+        .rarity-secreto .unit-name { color: #dc2626; text-shadow: 0 0 5px rgba(220, 38, 38, 0.5); }
+
+        @keyframes rainbow-border {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .controls {
+            margin-top: auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: center;
+        }
+
+        .btn-wave {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-wave:hover { background: #dc2626; }
+
+        .btn-cancel {
+            background: #4b5563;
+            color: white;
+        }
+        .btn-cancel:hover { background: #374151; }
     </style>
 </head>
-<body class="text-white select-none">
+<body>
 
-<div class="flex h-screen w-full">
-    <!-- Área do Jogo (Canvas) -->
-    <div id="game-container" class="flex-1 relative">
-        <canvas id="gameCanvas" width="1024" height="768"></canvas>
-        
-        <!-- Tela de Fim de Jogo -->
-        <div id="game-over" class="absolute inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center hidden z-50">
-            <h1 class="text-6xl text-red-500 font-bold mb-4 medieval-font">O Reino Caiu!</h1>
-            <p class="text-xl mb-8">Os goblins dominararam a base.</p>
-            <button onclick="location.reload()" class="bg-yellow-600 hover:bg-yellow-500 text-black px-8 py-3 rounded text-xl font-bold medieval-font shadow-lg transition">Jogar Novamente</button>
+    <div id="game-container">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+    </div>
+
+    <div id="ui-panel">
+        <div class="header">
+            <h1>MEDIEVAL DEFENSE</h1>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">💰 <span id="gold-display">500</span></div>
+            <div class="stat-item">❤️ <span id="lives-display">20</span></div>
+            <div class="stat-item">⚔️ Rodada <span id="wave-display">1</span></div>
+        </div>
+
+        <div class="shop-title">Unidades Disponíveis</div>
+
+        <div class="shop-grid" id="shop-container"></div>
+
+        <div class="controls">
+            <button class="btn btn-cancel" id="btn-cancel">Cancelar</button>
+            <button class="btn btn-wave" id="btn-wave">Próxima Onda</button>
         </div>
     </div>
 
-    <!-- Painel Lateral / Loja -->
-    <div class="w-80 bg-gray-900 border-l border-gray-700 flex flex-col h-full shadow-2xl z-10">
-        <div class="p-4 border-b border-gray-700 bg-gray-800">
-            <h1 class="text-3xl text-center mb-3 text-yellow-500 medieval-font drop-shadow-md">Defesa Real</h1>
-            <div class="flex justify-between font-bold text-xl px-2">
-                <span class="text-yellow-400 drop-shadow">💰 $<span id="ui-money">250</span></span>
-                <span class="text-red-400 drop-shadow">❤️ <span id="ui-lives">20</span></span>
-            </div>
-            <div class="flex justify-between items-center mt-4 px-2">
-                <span class="text-gray-300 font-bold text-lg">Rodada: <span id="ui-wave" class="text-white">1</span></span>
-                <button id="btn-start" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-white font-bold transition shadow" onclick="startWave()">Iniciar Batalha</button>
-            </div>
-        </div>
-        
-        <div class="p-2 text-center text-sm text-gray-400 italic border-b border-gray-700 bg-gray-800">
-            Selecione uma tropa e clique no campo para posicionar.
-        </div>
-        
-        <div id="shop-container" class="flex-1 overflow-y-auto p-3 space-y-3 bg-gray-900 pb-10">
-            <!-- Cards injetados pelo JavaScript -->
-        </div>
-    </div>
-</div>
-
-<script>
-    // --- CONSTANTES E DADOS ---
-    const RANGE_MULTIPLIER = 15; // Fator de escala para os alcances solicitados
-
-    const RARITIES = {
-        'Comum': { color: '#9ca3af', bgClass: 'bg-gray-500 text-white', border: 'border-gray-400' },
-        'Incomum': { color: '#22c55e', bgClass: 'bg-green-600 text-white', border: 'border-green-400' },
-        'Raro': { color: '#3b82f6', bgClass: 'bg-blue-600 text-white', border: 'border-blue-400' },
-        'Épico': { color: '#a855f7', bgClass: 'bg-purple-600 text-white', border: 'border-purple-400' },
-        'Lendário': { color: '#eab308', bgClass: 'bg-yellow-500 text-black', border: 'border-yellow-300' },
-        'Mítico': { color: '#ec4899', bgClass: 'rainbow-gradient text-white', border: 'border-white' },
-        'Secreto': { color: '#ef4444', bgClass: 'bg-red-700 text-white', border: 'border-red-400' }
-    };
-
-    const TOWER_TYPES = [
-        { name: 'Camponês', rarity: 'Comum', damage: 2, cooldown: 1.0, range: 5, cost: 50, emoji: '🧑‍‍🌾', desc: 'Ataque simples corpo a corpo.' },
-        { name: 'Bardo', rarity: 'Incomum', damage: 0, cooldown: 0, range: 10, cost: 150, emoji: '🎸', desc: 'Reduz 10% do tempo de recarga de aliados no alcance.' },
-        { name: 'Cavaleiro', rarity: 'Incomum', damage: 10, cooldown: 2.0, range: 4, cost: 150, emoji: '🛡️', desc: 'Lutador robusto com recarga de 2s.' },
-        { name: 'Guerreiro', rarity: 'Raro', damage: 15, cooldown: 3.0, range: 7, cost: 300, emoji: '⚔️', desc: 'Dano alto com recarga de 3s.' },
-        { name: 'Arqueiro', rarity: 'Raro', damage: 5, cooldown: 4.0, range: 25, cost: 300, emoji: '🏹', desc: 'Longo alcance com recarga de 4s.' },
-        { name: 'Ladino', rarity: 'Épico', damage: 7.5, cooldown: 0.5, range: 10, cost: 500, emoji: '🗡️', desc: 'Ataque furtivo ultra rápido de 0.5s.' },
-        { name: 'Clero', rarity: 'Épico', damage: 0, cooldown: 0, range: 0, cost: 200, emoji: '⛪', desc: 'Gera $100 de ouro extra ao fim de cada rodada.' },
-        { name: 'Mago', rarity: 'Lendário', damage: 30, cooldown: 1.5, range: 15, cost: 1200, emoji: '🧙', desc: 'Dispara magia poderosa a cada 1.5s.' },
-        { name: 'Rei', rarity: 'Mítico', damage: 0, cooldown: 0, range: 0, cost: 3000, emoji: '👑', desc: 'Invoca cavalos com 2000 PV na pista a cada 25s.' },
-        { name: 'Dragão Carmesim', rarity: 'Secreto', damage: 500, cooldown: 5.0, range: 40, cost: 10000, emoji: '🐉', desc: 'A lenda. Dano de 500 a cada 5s.' },
-    ];
-
-    // --- VARIÁVEIS DE ESTADO ---
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    
-    let lastTime = 0;
-    let state = {
-        money: 200,
-        lives: 20,
-        wave: 1,
-        waveActive: false,
-        goblinsToSpawn: 0,
-        spawnTimer: 0,
-        placingTowerIndex: null,
-        gameOver: false
-    };
-
-    let towers = [];
-    let goblins = [];
-    let projectiles = [];
-    let horses = [];
-    let floatingTexts = [];
-
-    // Caminho percorrido pelos goblins (em proporção ao tamanho do canvas)
-    const pathPoints = [
-        {x: 0.0, y: 0.15},
-        {x: 0.2, y: 0.15},
-        {x: 0.2, y: 0.85},
-        {x: 0.5, y: 0.85},
-        {x: 0.5, y: 0.4},
-        {x: 0.8, y: 0.4},
-        {x: 0.8, y: 0.75},
-        {x: 1.0, y: 0.75}
-    ];
-    
-    // Mapeando caminho lógico para pixels baseando-se no tamanho fixo do canvas 1024x768
-    const path = pathPoints.map(p => ({ x: p.x * canvas.width, y: p.y * canvas.height }));
-
-    const shopContainer = document.getElementById('shop-container');
-    const uiMoney = document.getElementById('ui-money');
-    const uiLives = document.getElementById('ui-lives');
-    const uiWave = document.getElementById('ui-wave');
-    const btnStart = document.getElementById('btn-start');
-
-    function renderShop() {
-        shopContainer.innerHTML = '';
-        TOWER_TYPES.forEach((tower, index) => {
-            const card = document.createElement('div');
-            
-            // Formatando o tempo de recarga para texto
-            let atkText = tower.cooldown > 0 ? `${tower.cooldown}s` : '--';
-            let dmgText = tower.damage > 0 ? tower.damage : '--';
-            let rangeText = tower.range > 0 ? tower.range : '--';
-            
-            card.className = `tower-card p-3 rounded-lg border-2 cursor-pointer shadow-md flex flex-col ${RARITIES[tower.rarity].bgClass} ${RARITIES[tower.rarity].border}`;
-            card.id = `card-${index}`;
-            card.innerHTML = `
-                <div class="flex justify-between items-center mb-1">
-                    <span class="font-bold text-lg medieval-font">${tower.emoji} ${tower.name}</span>
-                    <span class="font-black bg-black bg-opacity-40 px-2 py-0.5 rounded">$${tower.cost}</span>
-                </div>
-                <div class="text-xs uppercase font-bold opacity-80 mb-1">${tower.rarity}</div>
-                <div class="text-xs opacity-90 mb-2 leading-tight">${tower.desc}</div>
-                <div class="flex justify-between text-xs bg-black bg-opacity-20 p-1 rounded font-mono">
-                    <span title="Dano">⚔️ ${dmgText}</span>
-                    <span title="Tempo de Recarga">⏳ ${atkText}</span>
-                    <span title="Alcance">🎯 ${rangeText}</span>
-                </div>
-            `;
-            
-            card.onclick = () => selectTower(index);
-            shopContainer.appendChild(card);
-        });
-        updateShopUI();
-    }
-
-    function updateShopUI() {
-        uiMoney.innerText = state.money;
-        uiLives.innerText = state.lives;
-        uiWave.innerText = state.wave;
-        
-        TOWER_TYPES.forEach((tower, index) => {
-            const card = document.getElementById(`card-${index}`);
-            if (!card) return;
-            
-            if (state.money < tower.cost) {
-                card.classList.add('disabled');
-            } else {
-                card.classList.remove('disabled');
-            }
-            
-            if (state.placingTowerIndex === index) {
-                card.classList.add('selected');
-            } else {
-                card.classList.remove('selected');
-            }
-        });
-    }
-
-    function selectTower(index) {
-        if (state.money >= TOWER_TYPES[index].cost) {
-            if (state.placingTowerIndex === index) {
-                state.placingTowerIndex = null; // Deselect
-            } else {
-                state.placingTowerIndex = index;
-            }
-            updateShopUI();
-        }
-    }
-
-    class Tower {
-        constructor(x, y, typeIndex) {
-            this.x = x;
-            this.y = y;
-            this.typeIndex = typeIndex;
-            this.data = TOWER_TYPES[typeIndex];
-            
-            this.cooldown = 0;
-            this.horseTimer = 0; // Para o Rei
-            this.bardsInRange = 0; // Quantos bardos estão buffando esta torre
-        }
-
-        update(dt) {
-            // Lógica do Rei (Mítico): Invoca Cavalos
-            if (this.data.name === 'Rei') {
-                this.horseTimer += dt;
-                if (this.horseTimer >= 25) { // a cada 25 segundos
-                    this.horseTimer = 0;
-                    horses.push(new Horse());
-                    createFloatingText(this.x, this.y, "Cavalo Invocado!", "#eab308");
-                }
-                return;
-            }
-
-            // Torres sem ataque (Bardo, Clero)
-            if (this.data.cooldown === 0) return;
-
-            this.cooldown -= dt;
-            if (this.cooldown <= 0) {
-                let target = this.findTarget();
-                if (target) {
-                    // Cálculo de tempo de recarga com buff dos Bardos (10% de redução por bardo)
-                    let baseCooldown = this.data.cooldown;
-                    let multiplier = Math.pow(0.9, this.bardsInRange);
-                    // Limita o buff a 50% de redução máxima
-                    if (multiplier < 0.5) multiplier = 0.5; 
-                    
-                    this.cooldown = baseCooldown * multiplier;
-                    
-                    // Dispara
-                    projectiles.push(new Projectile(this.x, this.y, target, this.data));
-                }
-            }
-        }
-
-        findTarget() {
-            let rangePx = this.data.range * RANGE_MULTIPLIER;
-            for (let g of goblins) {
-                let dist = Math.hypot(g.x - this.x, g.y - this.y);
-                if (dist <= rangePx) {
-                    return g; // Retorna o primeiro goblin que entrar no alcance
-                }
-            }
-            return null;
-        }
-
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, 20, 0, Math.PI * 2);
-            ctx.fillStyle = RARITIES[this.data.rarity].color;
-            ctx.fill();
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            // Emoji
-            ctx.font = '24px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(this.data.emoji, this.x, this.y + 2);
-            
-            // Aura especial para classes suporte ou mágicas
-            if (this.data.name === 'Bardo') {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.data.range * RANGE_MULTIPLIER, 0, Math.PI * 2);
-                ctx.strokeStyle = 'rgba(34, 197, 94, 0.15)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            } else if (this.data.name === 'Rei') {
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = "yellow";
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, 25, 0, Math.PI * 2);
-                ctx.strokeStyle = 'rgba(255, 215, 0, 0.6)';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-                ctx.shadowBlur = 0;
-            }
-        }
-    }
-
-    class Goblin {
-        constructor(hp, speed, reward) {
-            this.x = path[0].x;
-            this.y = path[0].y;
-            this.hp = hp;
-            this.maxHp = hp;
-            this.speed = speed;
-            this.reward = reward;
-            this.waypoint = 1;
-            this.emoji = ['👺', '👹', '🧟', '🧌'][Math.floor(Math.random()*4)];
-        }
-
-        update(dt) {
-            let target = path[this.waypoint];
-            let dx = target.x - this.x;
-            let dy = target.y - this.y;
-            let dist = Math.hypot(dx, dy);
-            
-            let move = this.speed * dt;
-            if (dist < move) {
-                this.x = target.x;
-                this.y = target.y;
-                this.waypoint++;
-                if (this.waypoint >= path.length) {
-                    return false; // Chegou ao fim (Tira vida)
-                }
-            } else {
-                this.x += (dx / dist) * move;
-                this.y += (dy / dist) * move;
-            }
-            return true;
-        }
-
-        draw() {
-            ctx.font = '22px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(this.emoji, this.x, this.y);
-            
-            // Barra de vida
-            ctx.fillStyle = '#ef4444';
-            ctx.fillRect(this.x - 12, this.y - 20, 24, 4);
-            ctx.fillStyle = '#22c55e';
-            let hpRatio = Math.max(0, this.hp / this.maxHp);
-            ctx.fillRect(this.x - 12, this.y - 20, 24 * hpRatio, 4);
-        }
-    }
-
-    class Horse {
-        constructor() {
-            this.hp = 2000;
-            this.maxHp = 2000;
-            this.waypoint = path.length - 1; // Nasce na base (último ponto)
-            this.x = path[this.waypoint].x;
-            this.y = path[this.waypoint].y;
-            this.speed = 60; // Movimento contínuo contra os goblins
-        }
-
-        update(dt) {
-            let target = path[this.waypoint - 1]; // Move para trás
-            if (!target) return false; // Chegou no início do mapa e some
-
-            let dx = target.x - this.x;
-            let dy = target.y - this.y;
-            let dist = Math.hypot(dx, dy);
-            
-            let move = this.speed * dt;
-            if (dist < move) {
-                this.x = target.x;
-                this.y = target.y;
-                this.waypoint--;
-                if (this.waypoint <= 0) return false;
-            } else {
-                this.x += (dx / dist) * move;
-                this.y += (dy / dist) * move;
-            }
-            return true;
-        }
-
-        draw() {
-            ctx.font = '28px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            // Vira o emoji dependendo da direção
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            ctx.scale(-1, 1); // Cavalos correm da direita pra esquerda geralmente
-            ctx.fillText('🐎', 0, 0);
-            ctx.restore();
-
-            // Vida do Cavalo
-            ctx.fillStyle = '#ef4444';
-            ctx.fillRect(this.x - 15, this.y - 25, 30, 5);
-            ctx.fillStyle = '#eab308';
-            let hpRatio = Math.max(0, this.hp / this.maxHp);
-            ctx.fillRect(this.x - 15, this.y - 25, 30 * hpRatio, 5);
-        }
-    }
-
-    class Projectile {
-        constructor(x, y, target, towerData) {
-            this.x = x;
-            this.y = y;
-            this.target = target;
-            this.damage = towerData.damage;
-            this.speed = 400; // pixels/s
-            this.type = towerData.name;
-            
-            // Grava último alvo caso o inimigo morra antes de acertar
-            this.targetX = target.x;
-            this.targetY = target.y;
-        }
-
-        update(dt) {
-            if (goblins.includes(this.target)) {
-                this.targetX = this.target.x;
-                this.targetY = this.target.y;
-            }
-
-            let dx = this.targetX - this.x;
-            let dy = this.targetY - this.y;
-            let dist = Math.hypot(dx, dy);
-            
-            if (dist < this.speed * dt) {
-                if (goblins.includes(this.target)) {
-                    this.target.hp -= this.damage;
-                    createFloatingText(this.target.x, this.target.y - 10, `-${this.damage}`, '#ffeda8');
-                    
-                    if (this.target.hp <= 0) {
-                        state.money += this.target.reward;
-                        let idx = goblins.indexOf(this.target);
-                        if (idx > -1) goblins.splice(idx, 1);
-                        updateShopUI();
-                    }
-                }
-                return false; // Impacto, deletar projétil
-            }
-            this.x += (dx / dist) * this.speed * dt;
-            this.y += (dy / dist) * this.speed * dt;
-            return true;
-        }
-
-        draw() {
-            ctx.beginPath();
-            if (this.type === 'Dragão Carmesim') {
-                ctx.font = '20px Arial'; ctx.fillText('🔥', this.x, this.y);
-            } else if (this.type === 'Arqueiro') {
-                ctx.font = '14px Arial'; ctx.fillText('🏹', this.x, this.y);
-            } else if (this.type === 'Mago') {
-                ctx.font = '16px Arial'; ctx.fillText('✨', this.x, this.y);
-            } else {
-                ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
-                ctx.fillStyle = '#fef08a';
-                ctx.fill();
-            }
-        }
-    }
-
-    function createFloatingText(x, y, text, color) {
-        floatingTexts.push({ x: x, y: y, text: text, color: color, life: 1.0 });
-    }
-
-    function pointToSegmentDist(px, py, x1, y1, x2, y2) {
-        let A = px - x1, B = py - y1, C = x2 - x1, D = y2 - y1;
-        let dot = A * C + B * D;
-        let len_sq = C * C + D * D;
-        let param = -1;
-        if (len_sq != 0) param = dot / len_sq;
-        let xx, yy;
-        if (param < 0) { xx = x1; yy = y1; }
-        else if (param > 1) { xx = x2; yy = y2; }
-        else { xx = x1 + param * C; yy = y1 + param * D; }
-        let dx = px - xx, dy = py - yy;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    function canPlaceTower(x, y) {
-        // Distância borda
-        if (x < 25 || x > canvas.width - 25 || y < 25 || y > canvas.height - 25) return false;
-        
-        // Distância do caminho (largura do caminho é ~40, torre raio ~20)
-        let minPathDist = 35;
-        for (let i = 0; i < path.length - 1; i++) {
-            if (pointToSegmentDist(x, y, path[i].x, path[i].y, path[i+1].x, path[i+1].y) < minPathDist) return false;
-        }
-
-        // Distância de outras torres
-        for (let t of towers) {
-            if (Math.hypot(t.x - x, t.y - y) < 45) return false;
-        }
-        return true;
-    }
-
-    function getMousePos(evt) {
-        let rect = canvas.getBoundingClientRect();
-        let scaleX = canvas.width / rect.width;
-        let scaleY = canvas.height / rect.height;
-        return {
-            x: (evt.clientX - rect.left) * scaleX,
-            y: (evt.clientY - rect.top) * scaleY
+    <script>
+        const UNITS = {
+            campones: { id: 'campones', name: 'Camponês', rarity: 'comum', cost: 50, damage: 2, cooldown: 1.0, range: 50, icon: '👨‍🌾' },
+            bardo: { id: 'bardo', name: 'Bardo', rarity: 'incomum', cost: 120, damage: 0, cooldown: 1.0, range: 100, icon: '🪕', aura: 0.1 },
+            cavaleiro: { id: 'cavaleiro', name: 'Cavaleiro', rarity: 'incomum', cost: 150, damage: 10, cooldown: 2.0, range: 40, icon: '🛡️' },
+            guerreiro: { id: 'guerreiro', name: 'Guerreiro', rarity: 'raro', cost: 250, damage: 15, cooldown: 3.0, range: 70, icon: '⚔️' },
+            arqueiro: { id: 'arqueiro', name: 'Arqueiro', rarity: 'raro', cost: 200, damage: 8, cooldown: 4.0, range: 250, icon: '🏹' },
+            ladino: { id: 'ladino', name: 'Ladino', rarity: 'epico', cost: 350, damage: 7.5, cooldown: 0.5, range: 100, icon: '🗡️' },
+            clero: { id: 'clero', name: 'Clero', rarity: 'epico', cost: 200, damage: 0, cooldown: 1.0, range: 0, icon: '✝️', goldPerRound: 100 },
+            mago: { id: 'mago', name: 'Mago', rarity: 'lendario', cost: 500, damage: 50, cooldown: 1.5, range: 150, icon: '🧙' },
+            rei: { id: 'rei', name: 'Rei', rarity: 'mitico', cost: 1000, damage: 0, cooldown: 25.0, range: 0, icon: '👑', spawnsHorses: true },
+            dragao: { id: 'dragao', name: 'Dragão Carmesim', rarity: 'secreto', cost: 2000, damage: 500, cooldown: 5.0, range: 400, icon: '🐉' }
         };
-    }
 
-    let mousePos = {x: 0, y: 0};
-    canvas.addEventListener('mousemove', (e) => { mousePos = getMousePos(e); });
-    
-    canvas.addEventListener('click', (e) => {
-        if (state.placingTowerIndex !== null) {
-            let pos = getMousePos(e);
-            let towerData = TOWER_TYPES[state.placingTowerIndex];
-            
-            if (canPlaceTower(pos.x, pos.y) && state.money >= towerData.cost) {
-                state.money -= towerData.cost;
-                towers.push(new Tower(pos.x, pos.y, state.placingTowerIndex));
-                updateBardsAura(); // Recalcula buffs
-                state.placingTowerIndex = null;
-                updateShopUI();
-            } else {
-                // Efeito visual de erro?
-                createFloatingText(pos.x, pos.y, "Espaço Inválido!", "#ef4444");
-            }
-        }
-    });
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
 
-    function updateBardsAura() {
-        towers.forEach(t => {
-            t.bardsInRange = 0;
-            if (t.data.name !== 'Bardo' && t.data.name !== 'Clero' && t.data.name !== 'Rei') {
-                towers.forEach(other => {
-                    if (other.data.name === 'Bardo') {
-                        if (Math.hypot(t.x - other.x, t.y - other.y) <= other.data.range * RANGE_MULTIPLIER) {
-                            t.bardsInRange++;
-                        }
-                    }
-                });
-            }
-        });
-    }
+        let gold = 600;
+        let lives = 20;
+        let wave = 1;
+        let selectedUnitKey = null;
+        let waveInProgress = false;
 
-    function startWave() {
-        if (state.waveActive || state.gameOver) return;
-        state.waveActive = true;
-        // Goblins escalam na dificuldade
-        state.goblinsToSpawn = 5 + state.wave * 3;
-        state.spawnTimer = 0;
-        
-        btnStart.classList.add('opacity-50', 'cursor-not-allowed');
-        btnStart.innerText = "Em Batalha...";
-    }
+        const path = [
+            {x: 0, y: 300},
+            {x: 200, y: 300},
+            {x: 200, y: 120},
+            {x: 500, y: 120},
+            {x: 500, y: 480},
+            {x: 680, y: 480},
+            {x: 680, y: 300},
+            {x: 800, y: 300}
+        ];
 
-    function endWave() {
-        state.waveActive = false;
-        state.wave++;
-        
-        // Habilidade especial do Clero (+100 por round por clero)
-        let clerics = towers.filter(t => t.data.name === 'Clero').length;
-        if (clerics > 0) {
-            let bonus = clerics * 100;
-            state.money += bonus;
-            
-            // Efeito visual nos cleros
-            towers.forEach(t => {
-                if (t.data.name === 'Clero') {
-                    createFloatingText(t.x, t.y - 20, "+$100 (Bênção)", "#fcd34d");
+        let towers = [];
+        let enemies = [];
+        let projectiles = [];
+        let horses = [];
+        let effects = [];
+
+        let lastTime = performance.now();
+
+        // Renderizar Loja
+        const shopContainer = document.getElementById('shop-container');
+        Object.keys(UNITS).forEach(key => {
+            const u = UNITS[key];
+            const card = document.createElement('div');
+            card.className = `unit-card rarity-${u.rarity}`;
+            card.dataset.key = key;
+
+            let desc = `💥 ${u.damage} | ⏳ ${u.cooldown}s | 🎯 ${u.range}`;
+            if (u.id === 'bardo') desc = `Aura Cooldown: -10% | 🎯 ${u.range}`;
+            if (u.id === 'clero') desc = `💰 +$100 por rodada`;
+            if (u.id === 'rei') desc = `🐎 Invoca Cavalo (2000 HP / 25s)`;
+
+            card.innerHTML = `
+                <div class="unit-info">
+                    <div class="unit-icon">${u.icon}</div>
+                    <div class="unit-details">
+                        <div class="unit-name">${u.name}</div>
+                        <div class="unit-stats">${desc}</div>
+                    </div>
+                </div>
+                <div class="unit-price">$${u.cost}</div>
+            `;
+
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.unit-card').forEach(c => c.classList.remove('selected'));
+                if (selectedUnitKey === key) {
+                    selectedUnitKey = null;
+                } else {
+                    selectedUnitKey = key;
+                    card.classList.add('selected');
                 }
             });
-        }
-        
-        btnStart.classList.remove('opacity-50', 'cursor-not-allowed');
-        btnStart.innerText = "Iniciar Batalha";
-        updateShopUI();
-    }
 
-    function drawMap() {
-        // Limpar fundo
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Caminho
-        ctx.lineWidth = 45;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.strokeStyle = '#854d0e'; // Marrom estrada
-        ctx.beginPath();
-        ctx.moveTo(path[0].x, path[0].y);
-        for(let i=1; i<path.length; i++) {
-            ctx.lineTo(path[i].x, path[i].y);
-        }
-        ctx.stroke();
+            shopContainer.appendChild(card);
+        });
 
-        // Linha interna para dar textura
-        ctx.lineWidth = 35;
-        ctx.strokeStyle = '#a16207';
-        ctx.stroke();
-    }
+        document.getElementById('btn-cancel').addEventListener('click', () => {
+            selectedUnitKey = null;
+            document.querySelectorAll('.unit-card').forEach(c => c.classList.remove('selected'));
+        });
 
-    function gameLoop(timestamp) {
-        if (!lastTime) lastTime = timestamp;
-        let dt = (timestamp - lastTime) / 1000;
-        lastTime = timestamp;
-        
-        // Limite de delta time em caso de travamentos da aba
-        if (dt > 0.1) dt = 0.1;
+        document.getElementById('btn-wave').addEventListener('click', () => {
+            if (!waveInProgress) {
+                startWave();
+            }
+        });
 
-        if (!state.gameOver) {
-            // Spawn de inimigos
-            if (state.waveActive && state.goblinsToSpawn > 0) {
-                state.spawnTimer += dt;
-                if (state.spawnTimer >= 1.2) { // 1.2s entre goblins
-                    state.spawnTimer = 0;
-                    state.goblinsToSpawn--;
-                    
-                    let baseHp = 10 * Math.pow(1.3, state.wave - 1);
-                    let speed = 40 + (state.wave * 2);
-                    let reward = 5 + Math.floor(state.wave / 2);
-                    goblins.push(new Goblin(baseHp, speed, reward));
+        function startWave() {
+            waveInProgress = true;
+            let count = 5 + wave * 3;
+            let hp = 15 + Math.pow(wave, 1.8) * 10;
+
+            let spawned = 0;
+            let interval = setInterval(() => {
+                enemies.push({
+                    x: path[0].x,
+                    y: path[0].y,
+                    pathIndex: 0,
+                    hp: hp,
+                    maxHp: hp,
+                    speed: 1.2 + Math.min(wave * 0.05, 1.5),
+                    radius: 12
+                });
+                spawned++;
+                if (spawned >= count) {
+                    clearInterval(interval);
                 }
+            }, 1000);
+        }
+
+        function endWave() {
+            waveInProgress = false;
+            // Bônus do Clero
+            towers.forEach(t => {
+                if (t.id === 'clero') {
+                    gold += 100;
+                    effects.push({x: t.x, y: t.y - 15, text: '+$100', color: '#eab308', alpha: 1});
+                }
+            });
+            gold += 50 + wave * 10;
+            wave++;
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('gold-display').innerText = Math.floor(gold);
+            document.getElementById('lives-display').innerText = lives;
+            document.getElementById('wave-display').innerText = wave;
+        }
+
+        canvas.addEventListener('click', (e) => {
+            if (!selectedUnitKey) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const unitData = UNITS[selectedUnitKey];
+
+            if (gold < unitData.cost) return;
+
+            // Verificar se está muito perto do caminho
+            for (let i = 0; i < path.length - 1; i++) {
+                const dist = pointToSegmentDistance(x, y, path[i].x, path[i].y, path[i+1].x, path[i+1].y);
+                if (dist < 25) return;
             }
 
-            // Update Torres
-            towers.forEach(t => t.update(dt));
+            // Colocar torre
+            towers.push({
+                ...unitData,
+                x: x,
+                y: y,
+                lastShot: 0,
+                horseTimer: 0
+            });
 
-            // Update Goblins
-            for (let i = goblins.length - 1; i >= 0; i--) {
-                if (!goblins[i].update(dt)) {
-                    // Goblin vazou
-                    goblins.splice(i, 1);
-                    state.lives--;
-                    updateShopUI();
-                    if (state.lives <= 0) {
-                        state.gameOver = true;
-                        document.getElementById('game-over').classList.remove('hidden');
+            gold -= unitData.cost;
+            updateUI();
+
+            if (!e.shiftKey) {
+                selectedUnitKey = null;
+                document.querySelectorAll('.unit-card').forEach(c => c.classList.remove('selected'));
+            }
+        });
+
+        let mousePos = {x: 0, y: 0};
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mousePos = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        });
+
+        function pointToSegmentDistance(px, py, x1, y1, x2, y2) {
+            const l2 = (x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1);
+            if (l2 === 0) return Math.hypot(px - x1, py - y1);
+            let t = ((px - x1)*(x2 - x1) + (py - y1)*(y2 - y1)) / l2;
+            t = Math.max(0, Math.min(1, t));
+            return Math.hypot(px - (x1 + t*(x2 - x1)), py - (y1 + t*(y2 - y1)));
+        }
+
+        function gameLoop(time) {
+            const dt = (time - lastTime) / 1000;
+            lastTime = time;
+
+            update(dt);
+            render();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function update(dt) {
+            // Atualizar Torres
+            towers.forEach(t => {
+                // Cálculo de buff do Bardo
+                let cooldownReduction = 0;
+                if (t.id !== 'bardo' && t.id !== 'clero' && t.id !== 'rei') {
+                    towers.forEach(bardo => {
+                        if (bardo.id === 'bardo') {
+                            const dist = Math.hypot(t.x - bardo.x, t.y - bardo.y);
+                            if (dist <= bardo.range) {
+                                cooldownReduction = 0.10; // 10%
+                            }
+                        }
+                    });
+                }
+
+                const effectiveCooldown = t.cooldown * (1 - cooldownReduction);
+
+                // Mecânica do Rei
+                if (t.id === 'rei') {
+                    t.horseTimer = (t.horseTimer || 0) + dt;
+                    if (t.horseTimer >= 25) {
+                        t.horseTimer = 0;
+                        horses.push({
+                            x: path[path.length - 2].x,
+                            y: path[path.length - 2].y,
+                            pathIndex: path.length - 2,
+                            hp: 2000,
+                            maxHp: 2000,
+                            speed: 2.0
+                        });
+                        effects.push({x: t.x, y: t.y - 15, text: '🐎 Cavalo Invocado!', color: '#eab308', alpha: 1});
+                    }
+                    return;
+                }
+
+                if (t.damage <= 0) return;
+
+                t.lastShot += dt;
+                if (t.lastShot >= effectiveCooldown) {
+                    // Encontrar alvo
+                    let target = null;
+                    let maxProgress = -1;
+
+                    enemies.forEach(e => {
+                        const dist = Math.hypot(e.x - t.x, e.y - t.y);
+                        if (dist <= t.range) {
+                            const progress = e.pathIndex + (1 - Math.hypot(e.x - path[e.pathIndex+1].x, e.y - path[e.pathIndex+1].y)/100);
+                            if (progress > maxProgress) {
+                                maxProgress = progress;
+                                target = e;
+                            }
+                        }
+                    });
+
+                    if (target) {
+                        t.lastShot = 0;
+                        projectiles.push({
+                            x: t.x,
+                            y: t.y,
+                            target: target,
+                            speed: 400,
+                            damage: t.damage,
+                            color: t.rarity === 'secreto' ? '#dc2626' : (t.rarity === 'lendario' ? '#f59e0b' : '#ffffff')
+                        });
                     }
                 }
-            }
+            });
 
-            // Update Cavalos e Colisão (O sacrifício do Rei)
-            for (let h = horses.length - 1; h >= 0; h--) {
-                let horse = horses[h];
-                if (!horse.update(dt)) {
-                    horses.splice(h, 1);
+            // Atualizar Projéteis
+            for (let i = projectiles.length - 1; i >= 0; i--) {
+                const p = projectiles[i];
+                if (!enemies.includes(p.target)) {
+                    projectiles.splice(i, 1);
                     continue;
                 }
-                
-                // Colisão cavalo vs goblin
-                for (let g = goblins.length - 1; g >= 0; g--) {
-                    let gob = goblins[g];
-                    if (Math.hypot(horse.x - gob.x, horse.y - gob.y) < 30) {
-                        horse.hp -= gob.hp; // Cavalo toma dano igual a vida do goblin
-                        createFloatingText(gob.x, gob.y, "⚔️ Impacto!", "#fff");
-                        state.money += gob.reward; // Recompensa extra pelo sacrifício!
-                        goblins.splice(g, 1); // Goblin morre esmagado
-                        updateShopUI();
-                        
-                        if (horse.hp <= 0) {
-                            horses.splice(h, 1);
-                            break; // Cavalo morreu, para de atropelar
+
+                const dx = p.target.x - p.x;
+                const dy = p.target.y - p.y;
+                const dist = Math.hypot(dx, dy);
+
+                if (dist < 10) {
+                    p.target.hp -= p.damage;
+                    projectiles.splice(i, 1);
+                } else {
+                    p.x += (dx / dist) * p.speed * dt;
+                    p.y += (dy / dist) * p.speed * dt;
+                }
+            }
+
+            // Atualizar Cavalos
+            for (let i = horses.length - 1; i >= 0; i--) {
+                const h = horses[i];
+                const prevPoint = path[h.pathIndex];
+
+                const dx = prevPoint.x - h.x;
+                const dy = prevPoint.y - h.y;
+                const dist = Math.hypot(dx, dy);
+
+                if (dist < 5) {
+                    h.pathIndex--;
+                    if (h.pathIndex < 0) {
+                        horses.splice(i, 1);
+                        continue;
+                    }
+                } else {
+                    h.x += (dx / dist) * h.speed;
+                    h.y += (dy / dist) * h.speed;
+                }
+
+                // Colisão com Goblins
+                for (let j = enemies.length - 1; j >= 0; j--) {
+                    const e = enemies[j];
+                    const eDist = Math.hypot(e.x - h.x, e.y - h.y);
+                    if (eDist < 20) {
+                        const damageDealt = Math.min(h.hp, e.hp);
+                        e.hp -= damageDealt;
+                        h.hp -= damageDealt;
+
+                        if (h.hp <= 0) {
+                            horses.splice(i, 1);
+                            break;
                         }
                     }
                 }
             }
 
-            // Update Projéteis
-            for (let i = projectiles.length - 1; i >= 0; i--) {
-                if (!projectiles[i].update(dt)) {
-                    projectiles.splice(i, 1);
+            // Atualizar Inimigos
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                const e = enemies[i];
+
+                if (e.hp <= 0) {
+                    gold += 12 + wave;
+                    updateUI();
+                    enemies.splice(i, 1);
+                    continue;
+                }
+
+                const nextPoint = path[e.pathIndex + 1];
+                const dx = nextPoint.x - e.x;
+                const dy = nextPoint.y - e.y;
+                const dist = Math.hypot(dx, dy);
+
+                if (dist < 5) {
+                    e.pathIndex++;
+                    if (e.pathIndex >= path.length - 1) {
+                        lives--;
+                        updateUI();
+                        enemies.splice(i, 1);
+                        if (lives <= 0) {
+                            alert("Fim de Jogo! Os Goblins invadiram o Castelo!");
+                            document.location.reload();
+                        }
+                        continue;
+                    }
+                } else {
+                    e.x += (dx / dist) * e.speed;
+                    e.y += (dy / dist) * e.speed;
                 }
             }
 
-            // Verifica fim de rodada
-            if (state.waveActive && state.goblinsToSpawn === 0 && goblins.length === 0) {
+            // Atualizar Efeitos flutuantes
+            for (let i = effects.length - 1; i >= 0; i--) {
+                const ef = effects[i];
+                ef.y -= 10 * dt;
+                ef.alpha -= 0.8 * dt;
+                if (ef.alpha <= 0) effects.splice(i, 1);
+            }
+
+            // Checar Fim de Onda
+            if (waveInProgress && enemies.length === 0) {
                 endWave();
             }
         }
 
-        // Renderização
-        drawMap();
-        
-        towers.forEach(t => t.draw());
-        horses.forEach(h => h.draw());
-        goblins.forEach(g => g.draw());
-        projectiles.forEach(p => p.draw());
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Desenhar preview da torre selecionada
-        if (state.placingTowerIndex !== null) {
-            let twData = TOWER_TYPES[state.placingTowerIndex];
-            let rangePx = twData.range * RANGE_MULTIPLIER;
-            let valid = canPlaceTower(mousePos.x, mousePos.y) && state.money >= twData.cost;
-            
+            // Desenhar Caminho
+            ctx.strokeStyle = '#8d6e63';
+            ctx.lineWidth = 40;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
             ctx.beginPath();
-            ctx.arc(mousePos.x, mousePos.y, rangePx, 0, Math.PI*2);
-            ctx.fillStyle = valid ? 'rgba(255, 255, 255, 0.15)' : 'rgba(239, 68, 68, 0.2)';
-            ctx.fill();
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = valid ? '#fff' : '#ef4444';
+            path.forEach((p, index) => {
+                if (index === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            });
             ctx.stroke();
 
-            ctx.globalAlpha = 0.6;
+            // Borda do Caminho
+            ctx.strokeStyle = '#5d4037';
+            ctx.lineWidth = 44;
+            ctx.globalCompositeOperation = 'destination-over';
             ctx.beginPath();
-            ctx.arc(mousePos.x, mousePos.y, 20, 0, Math.PI * 2);
-            ctx.fillStyle = RARITIES[twData.rarity].color;
-            ctx.fill();
-            ctx.font = '24px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(twData.emoji, mousePos.x, mousePos.y + 2);
-            ctx.globalAlpha = 1.0;
+            path.forEach((p, index) => {
+                if (index === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            });
+            ctx.stroke();
+            ctx.globalCompositeOperation = 'source-over';
+
+            // Desenhar Castelo (Visto de Cima / Top-down)
+            drawCastleTopDown();
+
+            // Desenhar Alcance na prévia de compra
+            if (selectedUnitKey) {
+                const unit = UNITS[selectedUnitKey];
+                ctx.beginPath();
+                ctx.arc(mousePos.x, mousePos.y, unit.range, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+
+            // Desenhar Auras de Bardo
+            towers.forEach(t => {
+                if (t.id === 'bardo') {
+                    ctx.beginPath();
+                    ctx.arc(t.x, t.y, t.range, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(34, 197, 94, 0.1)';
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(34, 197, 94, 0.4)';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            });
+
+            // Desenhar Torres
+            towers.forEach(t => {
+                ctx.font = '24px serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(t.icon, t.x, t.y);
+            });
+
+            // Desenhar Cavalos
+            horses.forEach(h => {
+                ctx.font = '20px serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🐎', h.x, h.y);
+
+                // Barra de Vida
+                ctx.fillStyle = 'red';
+                ctx.fillRect(h.x - 15, h.y - 18, 30, 4);
+                ctx.fillStyle = '#22c55e';
+                ctx.fillRect(h.x - 15, h.y - 18, (h.hp / h.maxHp) * 30, 4);
+            });
+
+            // Desenhar Inimigos (Goblins)
+            enemies.forEach(e => {
+                ctx.font = '22px serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('👺', e.x, e.y);
+
+                // Barra de Vida
+                ctx.fillStyle = 'red';
+                ctx.fillRect(e.x - 12, e.y - 16, 24, 4);
+                ctx.fillStyle = '#22c55e';
+                ctx.fillRect(e.x - 12, e.y - 16, Math.max(0, (e.hp / e.maxHp)) * 24, 4);
+            });
+
+            // Desenhar Projéteis
+            projectiles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+            });
+
+            // Efeitos Flutuantes
+            effects.forEach(ef => {
+                ctx.globalAlpha = ef.alpha;
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillStyle = ef.color;
+                ctx.fillText(ef.text, ef.x, ef.y);
+                ctx.globalAlpha = 1.0;
+            });
         }
 
-        // Efeitos de texto flutuante
-        for (let i = floatingTexts.length - 1; i >= 0; i--) {
-            let ft = floatingTexts[i];
-            ft.life -= dt;
-            ft.y -= 20 * dt; // Sobem lentamente
-            if (ft.life <= 0) {
-                floatingTexts.splice(i, 1);
-            } else {
-                ctx.globalAlpha = ft.life;
-                ctx.fillStyle = ft.color;
-                ctx.font = 'bold 18px Arial';
-                ctx.textAlign = 'center';
-                ctx.strokeStyle = '#000';
+        function drawCastleTopDown() {
+            const cx = 730;
+            const cy = 300;
+
+            // Base principal
+            ctx.fillStyle = '#4a5568';
+            ctx.fillRect(cx - 50, cy - 120, 120, 240);
+
+            // Detalhes de pedra
+            ctx.fillStyle = '#2d3748';
+            ctx.fillRect(cx - 45, cy - 115, 110, 230);
+
+            // Torres dos 4 Cantos
+            const towers = [
+                {x: cx - 45, y: cy - 115},
+                {x: cx + 55, y: cy - 115},
+                {x: cx - 45, y: cy + 115},
+                {x: cx + 55, y: cy + 115}
+            ];
+
+            towers.forEach(tw => {
+                ctx.beginPath();
+                ctx.arc(tw.x, tw.y, 25, 0, Math.PI * 2);
+                ctx.fillStyle = '#718096';
+                ctx.fill();
+                ctx.strokeStyle = '#1a202c';
                 ctx.lineWidth = 3;
-                ctx.strokeText(ft.text, ft.x, ft.y);
-                ctx.fillText(ft.text, ft.x, ft.y);
-                ctx.globalAlpha = 1.0;
+                ctx.stroke();
+
+                // Telhado/Ameias
+                ctx.beginPath();
+                ctx.arc(tw.x, tw.y, 15, 0, Math.PI * 2);
+                ctx.fillStyle = '#4a5568';
+                ctx.fill();
+            });
+
+            // Portão
+            ctx.fillStyle = '#1a202c';
+            ctx.fillRect(cx - 55, cy - 25, 20, 50);
+
+            // Grade de ferro
+            ctx.strokeStyle = '#a0aec0';
+            ctx.lineWidth = 2;
+            for(let i = cy - 20; i <= cy + 20; i += 8) {
+                ctx.beginPath();
+                ctx.moveTo(cx - 55, i);
+                ctx.lineTo(cx - 35, i);
+                ctx.stroke();
             }
         }
 
+        updateUI();
         requestAnimationFrame(gameLoop);
-    }
-
-    // Inicializa
-    renderShop();
-    requestAnimationFrame(gameLoop);
-
-</script>
+    </script>
 </body>
 </html>
