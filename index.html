@@ -335,7 +335,9 @@
         function startWave() {
             waveInProgress = true;
             let count = 5 + wave * 3;
-            let hp = 10 + Math.pow(wave - 1, 1.8) * 10;
+            
+            // Redução do crescimento de vida nas ondas iniciais (2 a 9)
+            let hp = 10 + Math.pow(wave - 1, 1.35) * 6;
 
             let spawned = 0;
             let interval = setInterval(() => {
