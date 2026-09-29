@@ -227,7 +227,7 @@
         </div>
 
         <div class="stats-bar">
-            <div class="stat-item">💰 <span id="gold-display">500</span></div>
+            <div class="stat-item">💰 <span id="gold-display">600</span></div>
             <div class="stat-item">❤️ <span id="lives-display">20</span></div>
             <div class="stat-item">⚔️ Rodada <span id="wave-display">1</span></div>
         </div>
@@ -245,15 +245,15 @@
     <script>
         const UNITS = {
             campones: { id: 'campones', name: 'Camponês', rarity: 'comum', cost: 50, damage: 2, cooldown: 1.0, range: 50, icon: '👨‍🌾' },
-            bardo: { id: 'bardo', name: 'Bardo', rarity: 'incomum', cost: 120, damage: 0, cooldown: 1.0, range: 100, icon: '🪕', aura: 0.1 },
+            bardo: { id: 'bardo', name: 'Bardo', rarity: 'incomum', cost: 150, damage: 0, cooldown: 1.0, range: 100, icon: '🪕', aura: 0.1 },
             cavaleiro: { id: 'cavaleiro', name: 'Cavaleiro', rarity: 'incomum', cost: 150, damage: 10, cooldown: 2.0, range: 40, icon: '🛡️' },
-            guerreiro: { id: 'guerreiro', name: 'Guerreiro', rarity: 'raro', cost: 250, damage: 15, cooldown: 3.0, range: 70, icon: '⚔️' },
-            arqueiro: { id: 'arqueiro', name: 'Arqueiro', rarity: 'raro', cost: 200, damage: 8, cooldown: 4.0, range: 250, icon: '🏹' },
-            ladino: { id: 'ladino', name: 'Ladino', rarity: 'epico', cost: 350, damage: 7.5, cooldown: 0.5, range: 100, icon: '🗡️' },
+            guerreiro: { id: 'guerreiro', name: 'Guerreiro', rarity: 'raro', cost: 300, damage: 15, cooldown: 3.0, range: 70, icon: '⚔️' },
+            arqueiro: { id: 'arqueiro', name: 'Arqueiro', rarity: 'raro', cost: 300, damage: 8, cooldown: 4.0, range: 250, icon: '🏹' },
+            ladino: { id: 'ladino', name: 'Ladino', rarity: 'epico', cost: 450, damage: 7.5, cooldown: 0.5, range: 100, icon: '🗡️' },
             clero: { id: 'clero', name: 'Clero', rarity: 'epico', cost: 200, damage: 0, cooldown: 1.0, range: 0, icon: '✝️', goldPerRound: 100 },
-            mago: { id: 'mago', name: 'Mago', rarity: 'lendario', cost: 500, damage: 50, cooldown: 1.5, range: 150, icon: '🧙' },
-            rei: { id: 'rei', name: 'Rei', rarity: 'mitico', cost: 1000, damage: 0, cooldown: 25.0, range: 0, icon: '👑', spawnsHorses: true },
-            dragao: { id: 'dragao', name: 'Dragão Carmesim', rarity: 'secreto', cost: 2000, damage: 500, cooldown: 5.0, range: 400, icon: '🐉' }
+            mago: { id: 'mago', name: 'Mago', rarity: 'lendario', cost: 750, damage: 50, cooldown: 1.5, range: 150, icon: '🧙' },
+            rei: { id: 'rei', name: 'Rei', rarity: 'mitico', cost: 2500, damage: 0, cooldown: 25.0, range: 0, icon: '👑', spawnsHorses: true },
+            dragao: { id: 'dragao', name: 'Dragão Carmesim', rarity: 'secreto', cost: 5000, damage: 500, cooldown: 5.0, range: 400, icon: '🐉' }
         };
 
         const canvas = document.getElementById('gameCanvas');
@@ -335,7 +335,7 @@
         function startWave() {
             waveInProgress = true;
             let count = 5 + wave * 3;
-            let hp = 15 + Math.pow(wave, 1.8) * 10;
+            let hp = 10 + Math.pow(wave - 1, 1.8) * 10;
 
             let spawned = 0;
             let interval = setInterval(() => {
